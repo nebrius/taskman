@@ -1,5 +1,5 @@
 /*
-remove flag to enable/disable squelching of errors try/catch coupled with errorFunc
+// TODO
 re-architect to allow multiple runs...all pre-run methods set initialStartCount and run copies initialStartCount to startCount
 add clearDependencies() method
 Update synchronizeTasks() to call clearDependencies()
@@ -29,7 +29,6 @@ module.exports = function() {
 		completionCallback,
 		errorCallback,
 		tasksRemaining,
-		propogateExceptions = false;
 		canceled = false;
 		
 	function getTaskById(taskID) {
@@ -43,18 +42,6 @@ module.exports = function() {
 			}
 		}
 		// Return undefined
-	}
-	
-	function runTask(task) {
-		try {
-			task.func();
-		} catch(e) {
-			console.log("caught an exception");
-			errorCallback && errorCallback(e);
-			if (propogateExceptions) {
-				throw e;
-			}
-		}
 	}
 	
 	this.add = function(taskID, dependencies, taskFunc) {
@@ -122,7 +109,7 @@ module.exports = function() {
 					}
 				}, function(customData) { // error func
 					self.cancel();
-					throw customData;
+					errorCallback && errorCallback(customData);
 				});
 			}
 		});
@@ -200,29 +187,20 @@ module.exports = function() {
 		}
 	};
 	
-	this.run = function(serializeTasksFlag, propogateExceptionsFlag, completionFunc, errorFunc) {
+	this.run = function(serializeTasksFlag, completionFunc, errorFunc) {
 		
 		// Parse and validate the serializeTasks flag
 		if (is(serializeTasksFlag, "Function")) {
 			completionFunc = serializeTasksFlag;
-			errorFunc = propogateExceptionsFlag;
-			serializeTasksFlag = false;
-			propogateExceptionsFlag = false;
-		}
-		
-		// Parse and validate the propogateExceptions flag
-		if (is(propogateExceptionsFlag, "Function")) {
-			completionFunc = propogateExceptionsFlag;
 			errorFunc = completionFunc;
-			propogateExceptionsFlag = false;
+			serializeTasksFlag = false;
 		}
 		
-		// Parse and validate completion and error functions
+		// If either function is not actually a function, force it to something falsy
 		!is(completionFunc, "Function") && (completionFunc = undefined);
 		!is(errorFunc, "Function") && (errorFunc = undefined);
 		
 		serializeTasksFlag && this.serializeTasks();
-		propogateExceptions = propogateExceptionsFlag;
 		
 		var len = tasks.length,
 			i = 0,
@@ -233,7 +211,7 @@ module.exports = function() {
 		for(; i < len; i++) {
 			task = tasks[i];
 			if(!task.startCount) {
-				runTask(task);
+				task.func();
 			}
 		}
 	};
