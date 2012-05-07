@@ -1,5 +1,6 @@
 /*
 // TODO
+variables "tasks" is ambiguous at times, remove local vars with this name
 re-architect to allow multiple runs...all pre-run methods set initialStartCount and run copies initialStartCount to startCount
 add clearDependencies() method
 Update synchronizeTasks() to call clearDependencies()
@@ -119,13 +120,13 @@ module.exports = function() {
 		return taskID;
 	};
 	
-	this.createDependency = function(tasks, dependencies, count) {
+	this.createDependency = function(targets, dependencies, count) {
 		
-		// Validate the tasks list
-		if (is(tasks, "String")) {
-			tasks = [tasks];
-		} else if (!is(tasks, "Array")) {
-			throw new Error("Unsupported task type '" + is(tasks) + "'");
+		// Validate the targets list
+		if (is(targets, "String")) {
+			targets = [targets];
+		} else if (!is(targets, "Array")) {
+			throw new Error("Unsupported task type '" + is(targets) + "'");
 		}
 		
 		// Validate the dependencies list
@@ -135,7 +136,7 @@ module.exports = function() {
 			throw new Error("Unsupported dependencies type '" + is(dependencies) + "'");
 		}
 		
-		var tasksLength = tasks.length,
+		var targetsLength = targets.length,
 			dependenciesLength = dependencies.length,
 			task,
 			dependency,
@@ -147,28 +148,28 @@ module.exports = function() {
 		// Validate the count
 		count = isNaN(count) || count < 0 || count >= dependenciesLength ? dependenciesLength : count;
 		
-		// Validate the dependencies and tasks
+		// Validate the dependencies and targets
 		for(i = 0; i < dependenciesLength; i++) {
 			if (!getTaskById(dependencies[i])) {
 				throw new Error("Dependency '" + dependencies[i] + "' not found");
 			}
 		}
-		for(i = 0; i < tasksLength; i++) {
-			if (!getTaskById(tasks[i])) {
-				throw new Error("Task '" + tasks[i] + "' not found");
+		for(i = 0; i < targetsLength; i++) {
+			if (!getTaskById(targets[i])) {
+				throw new Error("Task '" + targets[i] + "' not found");
 			}
 		}
 		
-		// Link the dependencies and tasks if they haven't already been linked
+		// Link the dependencies and targets if they haven't already been linked
 		for(i = 0; i < dependenciesLength; i++) {
 			followTasks = getTaskById(dependencies[i]).followTasks;
-			for(j = 0; j < tasksLength; j++) {
-				task = tasks[j];
+			for(j = 0; j < targetsLength; j++) {
+				task = targets[j];
 				!~followTasks.indexOf(task) && followTasks.push(task);
 			}
 		}
-		for(i = 0; i < tasksLength; i++) {
-			task = getTaskById(tasks[i]);
+		for(i = 0; i < targetsLength; i++) {
+			task = getTaskById(targets[i]);
 			taskDependencies = task.dependencies;
 			for(j = 0; j < dependenciesLength; j++) {
 				dependency = dependencies[j];
@@ -178,10 +179,37 @@ module.exports = function() {
 		}
 	};
 	
+	this.clearDependencies = function(targets) {
+		
+		// Validate the tasks list
+		var len = tasks.length,
+			i = 0,
+			task;
+		if (is(targets, "String")) {
+			targets = [targets];
+		} else if (!is(targets, "Array")) {
+			targets = [];
+			for(; i < len; i++) {
+				targets.push(tasks[i].taskID);
+			}
+		}
+		
+		// Clear the dependencies
+		len = tasks.length,
+		i = 0;
+		for(; i < len; i++) {
+			task = tasks[i];
+			task.startCount = 0;
+			task.dependencies = [];
+			task.followTasks = [];
+		}
+	};
+	
 	this.serializeTasks = function() {
+		this.clearDependencies();
+		
 		var len = tasks.length,
 			i = 1;
-			
 		for(; i < len; i++) {
 			this.createDependency(tasks[i].taskID, tasks[i - 1].taskID);
 		}
@@ -218,13 +246,5 @@ module.exports = function() {
 	
 	this.cancel = function() {
 		canceled = true;
-		var len = tasks.length,
-			i = 0,
-			task;
-		for(; i < len; i++) {
-			task = tasks[i];
-			task.followTasks = [];
-			task.dependencies = [];
-		}
 	};
 };
