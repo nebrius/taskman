@@ -3,7 +3,7 @@
   "name": "taskman",
   "description": "Provides a task manager for organizing and scheduling asynchronous operations",
   "version": "0.1.0",
-  "main": "taskman.js",
+  "main": "lib/taskman.js",
   "repository": {
     "url": "https://github.com/bryan-m-hughes/node-taskman"
   },
