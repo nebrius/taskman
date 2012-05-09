@@ -17,9 +17,9 @@ task.add("task 2",function(finish) {
 	}, 2000);
 });
 
-task.add("task 3",function(finish, err) {
+task.add("task 3",function(finish, cancel) {
 	console.log("task 3 start");
-	err({ message: "Task 3 caused an error" });
+	cancel({ message: "Task 3 caused an error" });
 });
 
 task.add("task 4",["task 2"], function(finish) {
@@ -33,7 +33,7 @@ task.add("task 4",["task 2"], function(finish) {
 task.createDependency("task 3", ["task 1", "task 2"], 1);
 
 console.log("Starting tests...");
-task.run(false, true, function() {
+task.run(function() {
 	console.log("All tests finished");
 }, function(customData) {
 	console.log(customData.message);
