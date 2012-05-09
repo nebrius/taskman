@@ -1,14 +1,3 @@
-/*
-// TODO
-variables "tasks" is ambiguous at times, remove local vars with this name
-re-architect to allow multiple runs...all pre-run methods set initialStartCount and run copies initialStartCount to startCount
-add clearDependencies() method
-Update synchronizeTasks() to call clearDependencies()
-add reset() method that removes tasks/dependencies/etc
-Test adding multiple identical dependencies
-Test multiple runs
-*/
-
 function is(it, type) {
 	// summary:
 	//		Tests if "it" is a specific "type". If type is omitted, then
@@ -44,6 +33,15 @@ module.exports = function() {
 		}
 		// Return undefined
 	}
+	
+	this.reset = function() {
+		tasks = [],
+		currentTaskID = 1,
+		completionCallback = undefined,
+		errorCallback = undefined,
+		tasksRemaining = undefined,
+		canceled = false;
+	};
 	
 	this.add = function(taskID, dependencies, taskFunc) {
 		
@@ -81,6 +79,8 @@ module.exports = function() {
 		
 		var self = this;
 		tasks.push({
+			
+			initialStartCount: 0,
 			
 			startCount: 0,
 			
@@ -175,7 +175,7 @@ module.exports = function() {
 				dependency = dependencies[j];
 				!~taskDependencies.indexOf(dependency) && taskDependencies.push(dependency);
 			}
-			task.startCount += count;
+			task.initialStartCount += count;
 		}
 	};
 	
@@ -199,7 +199,7 @@ module.exports = function() {
 		i = 0;
 		for(; i < len; i++) {
 			task = tasks[i];
-			task.startCount = 0;
+			task.initialStartCount = 0;
 			task.dependencies = [];
 			task.followTasks = [];
 		}
@@ -238,6 +238,7 @@ module.exports = function() {
 		tasksRemaining = len;
 		for(; i < len; i++) {
 			task = tasks[i];
+			task.startCount = task.initialStartCount;
 			if(!task.startCount) {
 				task.func();
 			}
