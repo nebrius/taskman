@@ -8,22 +8,21 @@ are run first, and tasks that do have dependencies are run as soon as their depe
 To use a task manager, you must first instantiate an instance.
 ```javascript
 var Task = require("node-taskman"),
-  task = new Task();
+	task = new Task();
 ```
 
-Then you add your tasks in the form of functions
+Then you add your tasks in the form of functions. The task function should call either the finish or cancel method passed
+in to it once the task has completed/errored. This will trigger any dependents this task has.
 ```javascript
 var task1 = task.add(function(finish, cancel){
-  console.log("I am a task");
+	console.log("I am a task");
 	setTimeout(function(){
 		finish();
 	}, 1000);
 });
 ```
-The task function should call either the finish or cancel method passed in to it once the task has completed/errored.
-This will trigger any dependents this task has.
 
-Next, specify the relationships between the different tasks
+Next, specify the relationships between the different tasks.
 ```javascript
 task.createDependency(task3, [task1, task2]);
 ```
@@ -31,7 +30,7 @@ task.createDependency(task3, [task1, task2]);
 Finally, run and enjoy!
 ```javascript
 task.run(function(){
-  console.log("success!");
+	console.log("success!");
 })
 ```
 
@@ -55,10 +54,10 @@ taskman.add(taskID, dependencies, task)
 ```
 
 ### Parameters
-* taskID {String} _optional_ The identifier of the task. If ommitted, a task is generated automatically with the form "@".  
-* dependencies {String | Array} _optional_
-    	The task ID(s) of the task's dependencies. This is the same as calling taskman.createDependency(task, dependencies).
-* task {function(finish, cancel)} The task to add.
+* taskID <String> _optional_ The identifier of the task. If ommitted, a task is generated automatically with the form "@".  
+* dependencies <String | Array> _optional_
+		The task ID(s) of the task's dependencies. This is the same as calling taskman.createDependency(task, dependencies).
+* task <function(finish, cancel)> The task to add.
 
 ### Throws
 * Task ID is already taken.
@@ -78,7 +77,7 @@ taskman.cancel(customData)
 ```
 
 ### Parameters
-* customData {any} _optional_ Data to be passed to the cancel callback.
+* customData <any> _optional_ Data to be passed to the cancel callback.
 
 ## clearDependencies
 
@@ -91,7 +90,7 @@ taskman.clearDependencies(targets)
 ```
 
 ### Parameters
-* targets {String | Array} _optional_ The task ID's of the targets to clear the dependencies for. If no targets are specified, all dependencies are cleared.
+* targets <String | Array> _optional_ The task ID's of the targets to clear the dependencies for. If no targets are specified, all dependencies are cleared.
 
 ## createDependency
 
@@ -104,8 +103,8 @@ taskman.createDependency(targets, dependencies)
 ```
 
 ### Parameters
-* targets {String | Array} The task ID(s) target or targets to create dependencies for. If more than one target is supplied, every dependency specified is set as a dependency of each target.
-* dependencies {String | Array} The task ID(s) of the dependency or dependencies of the targets.
+* targets <String | Array> The task ID(s) target or targets to create dependencies for. If more than one target is supplied, every dependency specified is set as a dependency of each target.
+* dependencies <String | Array> The task ID(s) of the dependency or dependencies of the targets.
 
 ### Throws
 * Unsupported targets type. The targets parameter is not a string or an array.
@@ -128,13 +127,13 @@ Runs the scheduled tasks. Any changes to the dependencies after this method is c
 
 ### Signature
 ```javascript
-taskman.run(serializeTasksFlag, completion, cancel
+taskman.run(serializeTasksFlag, completion, cancel)
 ```
 
 ### Parameters
-* serializeTasksFlag {Boolean} Convienience flag that calls Taskman@serializeTasks under the hood
-* completion {function()} The function to call once all tasks have completed successfully
-* cancel {function(customData)} The function to call if one of the tasks calls Taskman#cancel or its cancel function. The data passed in to Taskman#cancel is supplied as the argument to this function.
+* serializeTasksFlag <Boolean> Convienience flag that calls Taskman@serializeTasks under the hood
+* completion <function()> The function to call once all tasks have completed successfully
+* cancel <function(customData)> The function to call if one of the tasks calls Taskman#cancel or its cancel function. The data passed in to Taskman#cancel is supplied as the argument to this function.
 
 ## serializeTasks
 
