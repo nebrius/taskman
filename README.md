@@ -54,7 +54,7 @@ taskman.add(taskID, dependencies, task)
 ```
 
 ### Parameters
-* taskID <String> _optional_ The identifier of the task. If ommitted, a task is generated automatically with the form "@".  
+* taskID <String> _optional_ The identifier of the task. If ommitted, a task is generated automatically with the form "@###".
 * dependencies <String | Array> _optional_
 		The task ID(s) of the task's dependencies. This is the same as calling taskman.createDependency(task, dependencies).
 * task <function(finish, cancel)> The task to add.
@@ -144,3 +144,18 @@ Automatically creates a dependency between every task such that the next task do
 ```javascript
 taskman.serializeTasks()
 ```
+
+# License
+Copyright 2012-2013 Bryan Hughes <bryan@theoreticalideations.com>
+
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+    http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
