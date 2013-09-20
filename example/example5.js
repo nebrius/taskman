@@ -13,13 +13,13 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 
-   This example shows how to cancel a task run mid-flight
+   This example shows how to explicitly serialize tasks
  */
 
 var Task = require('../'),
 	task = new Task();
 
-task.add('task 1',function(finish) {
+task.add(function(finish) {
 	console.log('task 1 start');
 	setTimeout(function(){
 		console.log('task 1 finish');
@@ -27,7 +27,7 @@ task.add('task 1',function(finish) {
 	}, 1000);
 });
 
-task.add('task 2',function(finish) {
+task.add(function(finish) {
 	console.log('task 2 start');
 	setTimeout(function(){
 		console.log('task 2 finish');
@@ -35,12 +35,15 @@ task.add('task 2',function(finish) {
 	}, 2000);
 });
 
-task.add('task 3',function(finish, cancel) {
+task.add(function(finish) {
 	console.log('task 3 start');
-	cancel({ message: 'Task 3 caused an error' });
+	setTimeout(function(){
+		console.log('task 3 finish');
+		finish();
+	}, 3000);
 });
 
-task.add('task 4',['task 2'], function(finish) {
+task.add(function(finish) {
 	console.log('task 4 start');
 	setTimeout(function(){
 		console.log('task 4 finish');
@@ -48,11 +51,9 @@ task.add('task 4',['task 2'], function(finish) {
 	}, 4000);
 });
 
-task.createDependency('task 3', ['task 1', 'task 2'], 1);
+task.serializeTasks();
 
 console.log('Starting tests...');
 task.run(function() {
 	console.log('All tests finished');
-}, function(customData) {
-	console.log(customData.message);
 });

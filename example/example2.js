@@ -12,6 +12,8 @@
    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
    See the License for the specific language governing permissions and
    limitations under the License.
+
+    This example shows how to run four tasks in serial
  */
 
 var Task = require('../'),
@@ -51,8 +53,5 @@ task.add(function(finish) {
 
 console.log('Starting tests...');
 task.run(true, function() {
-	console.log('First run finished');
-	task.run(function() {
-		console.log('All tests finished');
-	});
+	console.log('All tests finished');
 });
