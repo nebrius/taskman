@@ -6,7 +6,7 @@
 	"license": "Apache 2",
 	"main": "lib/taskman.js",
 	"repository": {
-		"type": "git"
+		"type": "git",
 		"url": "https://gitlab.theoreticalideations.com/nebrius/node-taskman"
 	},
 	"homepage": "https://gitlab.theoreticalideations.com/nebrius/node-taskman",
