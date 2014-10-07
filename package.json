@@ -1,15 +1,15 @@
 {
-	"author": "Bryan Hughes <bhughes@appcelerator.com>, <bryan.m.hughes@gmail.com>",
+	"author": "Bryan Hughes <bryan@theoreticalideations.com>",
 	"name": "taskman",
 	"description": "Provides a task manager for organizing and scheduling asynchronous operations",
-	"version": "0.1.2",
+	"version": "1.0.0",
 	"license": "Apache 2",
 	"main": "lib/taskman.js",
 	"repository": {
 		"type": "git",
-		"url": "https://gitlab.theoreticalideations.com/nebrius/node-taskman"
+		"url": "https://github.com/bryan-m-hughes/taskman"
 	},
-	"homepage": "https://gitlab.theoreticalideations.com/nebrius/node-taskman",
+	"homepage": "https://github.com/bryan-m-hughes/taskman",
 	"dependencies": {},
 	"devDependencies": {},
 	"optionalDependencies": {},
